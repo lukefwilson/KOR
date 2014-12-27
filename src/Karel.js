@@ -97,6 +97,10 @@ var Karel = cc.Node.extend({
 		console.log('move to ' + pixelPosition.x+ ' ' + pixelPosition.y)
 	},
 	
+	/*
+	 * Karel's Commands and Conditionals
+	 */
+	
 	move: function () {
 		var newPosition = this._positionInDirection(this._direction);
 		if (this._world.canMove(this._position, newPosition)) {
@@ -220,37 +224,16 @@ var Karel = cc.Node.extend({
 	},
 	
 	run: function () {
-		this.move();
-		this.putBeeper();
-		this.move();
-		this.putBeeper();
-		
-		this.turnLeft();
-		this.turnLeft();
-		
-		this.move();
-		this.pickBeeper();
-		this.move();
-		
-		while(this.frontIsClear()) {
-			this.move();
-		}
-		
-		console.log(this.facingNorth());
-		console.log(this.notFacingNorth());
-		console.log(this.facingEast());
-		console.log(this.notFacingEast());
-		console.log(this.facingSouth());
-		console.log(this.notFacingSouth());
-		console.log(this.facingWest());
-		console.log(this.notFacingWest());
-		console.log(this.beepersPresent());
-		console.log(this.noBeepersPresent());
-		console.log(this.frontIsClear());
-		console.log(this.frontIsNotClear());
-		console.log(this.leftIsClear());
-		console.log(this.leftIsNotClear());
-		console.log(this.rightIsClear());
-		console.log(this.rightIsNotClear());
+		/* Override with a separate file that looks like:
+		 * 
+		 * run.js
+		 * 
+		 * Karel = Karel.extend({
+		 *   run: function() {
+		 *		this.move();
+		 *   }
+		 * });
+		 * 
+		 */
 	}
 });

@@ -17,6 +17,7 @@
         "src/World.js",
         "src/Board.js",
         "src/ParseWorld.js",
+        "src/run.js",
         "src/CommandQueue.js"
     ]
 }
