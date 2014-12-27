@@ -28,15 +28,18 @@ var Karel = cc.Node.extend({
 		this.delay = 500;
 		this._bugHasOccured = false;
 
+		this._setUpSprite();
+		
+		this.run();
+		this._commandQueue.run();
+	},
+	
+	_setUpSprite: function () {
 		this._sprite = new cc.Sprite(res.ship_png);
 		this._sprite.setScale(0.15);
 		this._sprite.setPosition(this._board.pixelPositionForBoardPosition(this._position));
 		this._sprite.setRotation(this._rotationForDirection(this._direction));
-
-		board.addChild(this._sprite);
-		
-		this.run();
-		this._commandQueue.run();
+		this._board.addChild(this._sprite);
 	},
 	
 	_rotationForDirection: function (direction) {
