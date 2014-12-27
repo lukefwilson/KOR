@@ -40,6 +40,8 @@ this.isTrue(); // a replacement for while(true) -> while(this.isTrue())
 
 KOR parses a basic .txt file to create the world. Checkout `res/testWorld1.txt` to get a feeling for how the file looks.
 
+To change the world, edit `app.js` and pass your world file into the `World` constructor
+
 The first 3 lines are basic attributes for the world:
 
 1. Karel's starting position i.e. `0,0`
@@ -74,3 +76,9 @@ The world itself:
   - 2 beepers on (1,0)
   - 2 beepers on (0,2)
   - 1 beeper on (3,2)
+
+
+#TODO#
+1. Change execution speed from within KOR
+2. Change world from within KOR
+3. Re-run commands from within KOR
