@@ -23,7 +23,8 @@ var Karel = cc.Node.extend({
 		this._board = board;
 		this._position = world.startingPosition;
 		this._direction = world.startingDirection;
-		this._commandQueue = [];
+		this._commandQueue = new CommandQueue();
+
 		this.delay = 500;
 		this._bugHasOccured = false;
 
@@ -35,40 +36,7 @@ var Karel = cc.Node.extend({
 		board.addChild(this._sprite);
 		
 		this.run();
-		this._actOutCommands();
-	},
-	
-	_actOutCommands: function () {
-		this._performNextCommand(this);
-	},
-	
-	_canPushToCommandQueue: function () {
-		return this._commandQueue.length < 500 && !this._bugHasOccured;
-	},
-	
-	_addToCommandQueue: function (command) {
-		if (this._canPushToCommandQueue()) {
-			this._commandQueue.push(command);
-		}
-	},
-	
-	_performCommand: function (command) {
-		console.log('running command - ' + this._commandQueue.length + ' actions left in queue');
-		command();
-		setTimeout(this._performNextCommand, this.delay, this)
-	},
-	
-	_performNextCommand: function (karel) {
-		if (karel._commandQueue.length > 0) {
-			karel._performCommand(karel._commandQueue.splice(0,1)[0]);
-		}
-	},
-	
-	_addBugToCommandQueue: function (text) {
-		this._addToCommandQueue(function () {
-			console.log(text);
-		});
-		this._bugHasOccured = true;
+		this._commandQueue.run();
 	},
 	
 	_rotationForDirection: function (direction) {
@@ -106,13 +74,15 @@ var Karel = cc.Node.extend({
 	},
 
 	_canMoveFromCurrentPositionTo: function (newPosition) {
-		return this._world.canMove(this._position, newPosition) && this._canPushToCommandQueue();
+		return this._world.canMove(this._position, newPosition) && this._commandQueue.isAvailable();
 	},
 	
 	_rotateSpriteTo: function (direction) {
 		var rotation = this._rotationForDirection(direction)
 		var sprite = this._sprite;
-		this._addToCommandQueue(function(){ sprite.setRotation(rotation) });
+		this._commandQueue.add(function () { 
+			sprite.setRotation(rotation) 
+		});
 		console.log('rotate to ' + rotation)
 	},
 
@@ -121,7 +91,9 @@ var Karel = cc.Node.extend({
 		var pixelPosition = this._board.pixelPositionForBoardPosition(boardPosition);
 
 		var sprite = this._sprite;
-		this._addToCommandQueue(function(){ sprite.setPosition(pixelPosition) });
+		this._commandQueue.add(function () { 
+			sprite.setPosition(pixelPosition) 
+		});
 		console.log('move to ' + pixelPosition.x+ ' ' + pixelPosition.y)
 	},
 	
@@ -130,7 +102,7 @@ var Karel = cc.Node.extend({
 		if (this._world.canMove(this._position, newPosition)) {
 			this._moveSpriteTo(newPosition);
 		} else {
-			this._addBugToCommandQueue('BUG: can\'t move!');
+			this._commandQueue.addBug('BUG: can\'t move!');
 		}
 	},
 
@@ -146,12 +118,11 @@ var Karel = cc.Node.extend({
 		var position = this._position
 
 		world.putBeeperAt(position);
-		this._addToCommandQueue(function() { 
+		this._commandQueue.add(function() { 
 			board.putBeeperAt(position);
 		});
 	},
 
-	
 	pickBeeper: function () {
 		if (this._world.canPickBeeperAt(this._position)) {
 			var world = this._world;
@@ -159,93 +130,93 @@ var Karel = cc.Node.extend({
 			var position = this._position;
 			world.pickBeeperAt(position);
 
-			this._addToCommandQueue(function() { 
+			this._commandQueue.add(function () { 
 				board.pickBeeperAt(position);
 			});
 		} else {
-			this._addBugToCommandQueue('BUG: can\'t pick up a beeper that doesn\'t exist!');
+			this._commandQueue.addBug('BUG: can\'t pick up a beeper that doesn\'t exist!');
 		}
 	},
 	
 	frontIsClear: function () {
-		return this._canMoveFromCurrentPositionTo(this._positionInDirection(this._direction)) && this._canPushToCommandQueue();
+		return this._canMoveFromCurrentPositionTo(this._positionInDirection(this._direction)) && this._commandQueue.isAvailable();
 	},
 	
 	frontIsNotClear: function () {
-		return !this._canMoveFromCurrentPositionTo(this._positionInDirection(this._direction)) && this._canPushToCommandQueue();
+		return !this._canMoveFromCurrentPositionTo(this._positionInDirection(this._direction)) && this._commandQueue.isAvailable();
 	},
 	
 	leftIsClear: function () {
 		var directionToLeft = this._direction - 1;
 		if (directionToLeft < 0) directionToLeft = 3;
 		
-		return this._canMoveFromCurrentPositionTo(this._positionInDirection(directionToLeft)) && this._canPushToCommandQueue();
+		return this._canMoveFromCurrentPositionTo(this._positionInDirection(directionToLeft)) && this._commandQueue.isAvailable();
 	},
 	
 	leftIsNotClear: function () {
 		var directionToLeft = this._direction - 1;
 		if (directionToLeft < 0) directionToLeft = 3;
 
-		return !this._canMoveFromCurrentPositionTo(this._positionInDirection(directionToLeft)) && this._canPushToCommandQueue();
+		return !this._canMoveFromCurrentPositionTo(this._positionInDirection(directionToLeft)) && this._commandQueue.isAvailable();
 	},
 	
 	rightIsClear: function () {
 		var directionToRight = this._direction + 1;
 		if (directionToRight > 3) directionToRight = 0;
 
-		return this._canMoveFromCurrentPositionTo(this._positionInDirection(directionToRight)) && this._canPushToCommandQueue();
+		return this._canMoveFromCurrentPositionTo(this._positionInDirection(directionToRight)) && this._commandQueue.isAvailable();
 	},
 	
 	rightIsNotClear: function () {
 		var directionToRight = this._direction + 1;
 		if (directionToRight > 3) directionToRight = 0;
 
-		return !this._canMoveFromCurrentPositionTo(this._positionInDirection(directionToRight)) && this._canPushToCommandQueue();
+		return !this._canMoveFromCurrentPositionTo(this._positionInDirection(directionToRight)) && this._commandQueue.isAvailable();
 	},
 	
 	beepersPresent: function () {
-		return this._world.canPickBeeperAt(this._position) && this._canPushToCommandQueue();
+		return this._world.canPickBeeperAt(this._position) && this._commandQueue.isAvailable();
 	},
 	
 	noBeepersPresent: function () {
-		return !this._world.canPickBeeperAt(this._position) && this._canPushToCommandQueue();
+		return !this._world.canPickBeeperAt(this._position) && this._commandQueue.isAvailable();
 	},
 	
 	facingNorth: function () {
-		return this._direction === Direction.NORTH && this._canPushToCommandQueue();
+		return this._direction === Direction.NORTH && this._commandQueue.isAvailable();
 	},
 	
 	notFacingNorth: function () {
-		return this._direction !== Direction.NORTH && this._canPushToCommandQueue();
+		return this._direction !== Direction.NORTH && this._commandQueue.isAvailable();
 	},
 	
 	facingEast: function () {
-		return this._direction === Direction.EAST && this._canPushToCommandQueue();
+		return this._direction === Direction.EAST && this._commandQueue.isAvailable();
 	},
 	
 	notFacingEast: function () {
-		return this._direction !== Direction.EAST && this._canPushToCommandQueue();
+		return this._direction !== Direction.EAST && this._commandQueue.isAvailable();
 	},
 	
 	facingSouth: function () {
-		return this._direction === Direction.SOUTH && this._canPushToCommandQueue();
+		return this._direction === Direction.SOUTH && this._commandQueue.isAvailable();
 	},
 	
 	notFacingSouth: function () {
-		return this._direction !== Direction.SOUTH && this._canPushToCommandQueue();
+		return this._direction !== Direction.SOUTH && this._commandQueue.isAvailable();
 	},
 	
 	facingWest: function () {
-		return this._direction === Direction.WEST && this._canPushToCommandQueue();
+		return this._direction === Direction.WEST && this._commandQueue.isAvailable();
 	},
 	
 	notFacingWest: function () {
-		return this._direction !== Direction.WEST && this._canPushToCommandQueue();
+		return this._direction !== Direction.WEST && this._commandQueue.isAvailable();
 	},
 	
 	// replacement for while(true) -> while(this.isTrue())
 	isTrue: function () { 
-		return this._canPushToCommandQueue();
+		return this._commandQueue.isAvailable();
 	},
 	
 	run: function () {
@@ -260,6 +231,10 @@ var Karel = cc.Node.extend({
 		this.move();
 		this.pickBeeper();
 		this.move();
+		
+		while(this.frontIsClear()) {
+			this.move();
+		}
 		
 		console.log(this.facingNorth());
 		console.log(this.notFacingNorth());

@@ -116,27 +116,27 @@ var Board = cc.Node.extend({
 		this._drawBeepers();
 	},
 	
+	_layerPositionForBoardPosition: function (boardPosition) {
+		var boardLayerX = boardPosition.x * SQUARE_SIZE + (SQUARE_SIZE/2);
+		var boardLayerY = boardPosition.y * SQUARE_SIZE + (SQUARE_SIZE/2);
+		
+		return cc.p(boardLayerX, boardLayerY);
+	},
+	
 	putBeeperAt: function (position) {
 		var pointKey = Util.pointToString(position);
 		var beeperCount = this._beepers[pointKey] || 0;
-		
+
 		this._beepers[pointKey] = beeperCount+1;
 		this._updateBeepers();
 	},
-	
+
 	pickBeeperAt: function (position) {
 		var pointKey = Util.pointToString(position);
 		var beeperCount = this._beepers[pointKey] || 0;
 
 		this._beepers[pointKey] = beeperCount-1;
 		this._updateBeepers();
-	},
-	
-	_layerPositionForBoardPosition: function (boardPosition) {
-		var boardLayerX = boardPosition.x * SQUARE_SIZE + (SQUARE_SIZE/2);
-		var boardLayerY = boardPosition.y * SQUARE_SIZE + (SQUARE_SIZE/2);
-		
-		return cc.p(boardLayerX, boardLayerY);
 	},
 
 	pixelPositionForBoardPosition: function(boardPosition) {
