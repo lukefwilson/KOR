@@ -139,13 +139,10 @@ var Board = cc.Node.extend({
 		return cc.p(boardLayerX, boardLayerY);
 	},
 
-
 	pixelPositionForBoardPosition: function(boardPosition) {
 		var layerPosition = this.layerPositionForBoardPosition(boardPosition);
 		var pixelPosition = this.boardLayer.convertToWorldSpace(layerPosition);
 		
 		return this.convertToNodeSpace(pixelPosition);
 	}
-
-
 });

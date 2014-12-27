@@ -34,10 +34,10 @@ var Karel = cc.Node.extend({
 
 		board.addChild(this.sprite);
 		this.run();
-		this.act();
+		this.actOutCommands();
 	},
 	
-	act: function () {
+	actOutCommands: function () {
 		this.performNextCommand(this);
 	},
 	

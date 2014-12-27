@@ -15,6 +15,7 @@
         "src/Karel.js",
         "src/World.js",
         "src/Board.js",
+        "src/ParseWorld.js",
         "src/Util.js"
     ]
 }
