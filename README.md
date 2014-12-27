@@ -82,3 +82,4 @@ The world itself:
 1. Change execution speed from within KOR
 2. Change world from within KOR
 3. Re-run commands from within KOR
+4. Show Bugs within KOR rather than in console
