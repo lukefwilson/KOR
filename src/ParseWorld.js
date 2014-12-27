@@ -1,3 +1,5 @@
+/* A Method object to parse @param worldFile for @param world */
+
 var ParseWorld = {
 	_world: null,
 		

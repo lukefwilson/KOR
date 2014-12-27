@@ -1,3 +1,8 @@
+/*
+ * World keeps track of the world as Karel goes through its run() function. 
+ * It tells Karel whether or not it can do certain things.
+ */
+
 var World = cc.Node.extend({
 
 	size: null,

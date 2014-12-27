@@ -1,6 +1,20 @@
+/*
+ * Karel is the robot (ship), and the run function is what you override
+ * to make Karel move.
+ * 
+ * Karel keeps track of its position on the board and places the sprite where
+ * it needs to be. It asks the World whether or not it can do certain commands.
+ * Upon gathering all the commands in run(), Karel tells the CommandQueue to begin
+ * running them. 
+ * 
+ * Since JavaScript can't sleep a thread, Karel first runs all of the commands very
+ * quickly, filling up the commandQueue with various commands. Once the Karel
+ * run() finishes (whether because it reaches the max number of commands, it
+ * finds a bug, or it finishes successfully), it acts out the commands
+ * on the Board using the commandQueue run().
+ */
+
 var Karel = cc.Node.extend({
-	
-	delay: null,
 	
 	_sprite: null,
 	
@@ -14,8 +28,6 @@ var Karel = cc.Node.extend({
 	
 	_commandQueue: null,
 			
-	_bugHasOccured: null,
-		
 	ctor: function (world, board) {
 		this._super();
 		
@@ -24,9 +36,6 @@ var Karel = cc.Node.extend({
 		this._position = world.startingPosition;
 		this._direction = world.startingDirection;
 		this._commandQueue = new CommandQueue();
-
-		this.delay = 500;
-		this._bugHasOccured = false;
 
 		this._setUpSprite();
 		

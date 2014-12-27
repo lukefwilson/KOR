@@ -1,3 +1,8 @@
+/*
+ * Board is the visual part of the Karel board. It draws the dots, walls,
+ * and beepers. It also converts board position to pixel position for the Karel
+ * sprite.
+ */
 var SQUARE_SIZE = 80;
 
 var Board = cc.Node.extend({

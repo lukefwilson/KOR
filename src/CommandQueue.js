@@ -1,5 +1,10 @@
+/*
+ * Add commands to the CommandQueue, then run them every commandDelay
+ * milliseconds.
+ */
+
 var MAX_QUEUE_SIZE = 1000;
-var commandDelay = 500;
+var commandDelay = 500; // Change commandDelay change Karel's speed
 
 var CommandQueue = cc.Class.extend({
 		
