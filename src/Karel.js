@@ -28,7 +28,7 @@ var Karel = cc.Node.extend({
 		this.bugHasOccured = false;
 
 		this.sprite = new cc.Sprite(res.ship_png);
-		this.sprite.setScale(0.2);
+		this.sprite.setScale(0.15);
 		this.sprite.setPosition(this.board.pixelPositionForBoardPosition(this.position));
 		this.sprite.setRotation(this.rotationForDirection(this.direction));
 

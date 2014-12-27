@@ -17,19 +17,19 @@ var World = cc.Node.extend({
 	},
 	
 	putBeeperAt: function (point) {
-		var pointKey = this.pointToString(point);
+		var pointKey = Util.pointToString(point);
 		var beeperCount = this.beepers[pointKey] || 0;
 		this.beepers[pointKey] = beeperCount+1;
 	},
 	
 	canPickBeeperAt: function (point) {
-		var pointKey = this.pointToString(point);
+		var pointKey = Util.pointToString(point);
 		var beeperCount = this.beepers[pointKey] || 0;
 		return beeperCount > 0;
 	},
 	
 	pickBeeperAt: function (point) {
-		var pointKey = this.pointToString(point);
+		var pointKey = Util.pointToString(point);
 		var beeperCount = this.beepers[pointKey] || 0;
 		this.beepers[pointKey] = beeperCount-1;
 	},
@@ -43,21 +43,13 @@ var World = cc.Node.extend({
 	},
 	
 	canMove: function (from, to) {
-		if (this.walls[this.pointsToString(from, to)] || 
-				this.walls[this.pointsToString(to, from)] ||
+		if (this.walls[Util.pointsToString(from, to)] || 
+				this.walls[Util.pointsToString(to, from)] ||
 				this.pointIsOutOfBounds(from) ||
 				this.pointIsOutOfBounds(to)) {
 			return false;
 		}
 		return true;
-	},
-	
-	pointToString: function (point) {
-		return point.x + ',' + point.y;
-	},
-	
-	pointsToString: function (point1, point2) {
-		return this.pointToString(point1) + 'to' + this.pointToString(point2);
 	},
 	
 	parseWorldFile: function (worldFile) {
@@ -91,8 +83,7 @@ var World = cc.Node.extend({
 	},
 	
 	parseStartingPosition: function (positionLine) {
-		var pointArray = positionLine.split(',');
-		this.startingPosition = cc.p(parseInt(pointArray[0]), parseInt(pointArray[1]));
+		this.startingPosition = Util.stringToPoint(positionLine);
 	},
 	
 	parseStartingDirection: function (directionLine) {
@@ -100,15 +91,14 @@ var World = cc.Node.extend({
 	},
 	
 	parseWorldSize: function (sizeLine) {
-		var sizeArray = sizeLine.split(',');
-		this.size = cc.size(parseInt(sizeArray[0]), parseInt(sizeArray[1]));
+		this.size = Util.stringToSize(sizeLine);
 	},
 	
 	parseWallRow: function (wallString, y) {
 		for (var i = 0; i < wallString.length; i+=2) {
 			if(wallString.charAt(i) === '-') {
 				var x = i/2;
-				var pointsKey = this.pointsToString(cc.p(x, y), cc.p(x, y+1));
+				var pointsKey = Util.pointsToString(cc.p(x, y), cc.p(x, y+1));
 				this.walls[pointsKey] = true;
 			}
 		}
@@ -120,11 +110,11 @@ var World = cc.Node.extend({
 			if (i % 2 === 0){
 				var numBeepers = parseInt(rowString.charAt(i));
 				if (numBeepers) {
-					this.beepers[this.pointToString(cc.p(x,y))] = numBeepers;
+					this.beepers[Util.pointToString(cc.p(x,y))] = numBeepers;
 				}
 			} else {
 				if (rowString.charAt(i) === '|' ) {
-					var pointsKey = this.pointsToString(cc.p(x, y), cc.p(x+1, y));
+					var pointsKey = Util.pointsToString(cc.p(x, y), cc.p(x+1, y));
 					this.walls[pointsKey] = true;
 				}
 			}
