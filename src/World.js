@@ -34,21 +34,21 @@ var World = cc.Node.extend({
 		this.beepers[pointKey] = beeperCount-1;
 	},
 	
-	pointIsOutOfBounds: function (point) {
+	canMove: function (from, to) {
+		if (this.walls[Util.pointsToString(from, to)] || 
+				this.walls[Util.pointsToString(to, from)] ||
+				this._pointIsOutOfBounds(from) ||
+				this._pointIsOutOfBounds(to)) {
+			return false;
+		}
+		return true;
+	},
+	
+	_pointIsOutOfBounds: function (point) {
 		if (point.x < 0 || point.x > this.size.width-1 ||
 				point.y < 0 || point.y > this.size.height-1) {
 			return true;
 		}
 		return false;
 	},
-	
-	canMove: function (from, to) {
-		if (this.walls[Util.pointsToString(from, to)] || 
-				this.walls[Util.pointsToString(to, from)] ||
-				this.pointIsOutOfBounds(from) ||
-				this.pointIsOutOfBounds(to)) {
-			return false;
-		}
-		return true;
-	}
 });
