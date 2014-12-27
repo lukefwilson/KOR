@@ -2,75 +2,75 @@ var SQUARE_SIZE = 80;
 
 var Board = cc.Node.extend({
 
-	world: null,
+	_world: null,
 		
-	beepers: null,
+	_beepers: null,
 	
-	pixelSize: null,
+	_pixelSize: null,
 	
-	boardLayer: null,
+	_boardLayer: null,
 	
-	dotsNode: null,
+	_dotsNode: null,
 	
-	wallsNode: null,
+	_wallsNode: null,
 	
-	beepersNode: null,
+	_beepersNode: null,
 	
 	ctor: function (world) {
 		this._super();
 		
-		this.world = world;
-		this.beepers = JSON.parse(JSON.stringify(world.beepers)); // make a copy of the object
-		this.pixelSize = cc.winSize.height;
+		this._world = world;
+		this._beepers = JSON.parse(JSON.stringify(world.beepers)); // make a copy of the object
+		this._pixelSize = cc.winSize.height;
 
-		this.drawBoardLayer();
-		this.drawDots();
-		this.drawWalls();
-		this.drawBeepers();
+		this._drawBoardLayer();
+		this._drawDots();
+		this._drawWalls();
+		this._drawBeepers();
 	},
 	
-	drawBoardLayer: function () {
-		var worldSize = this.world.size;
+	_drawBoardLayer: function () {
+		var worldSize = this._world.size;
 		
 		var boardLayerWidth = worldSize.width * SQUARE_SIZE;
 		var boardLayerHeight = worldSize.height * SQUARE_SIZE;
 		
-		this.boardLayer = new cc.LayerColor(cc.color(255,255,255,255), boardLayerWidth, boardLayerHeight);
-		this.boardLayer.setPosition((this.pixelSize-boardLayerWidth)/2, (this.pixelSize-boardLayerHeight)/2);
+		this._boardLayer = new cc.LayerColor(cc.color(255,255,255,255), boardLayerWidth, boardLayerHeight);
+		this._boardLayer.setPosition((this._pixelSize-boardLayerWidth)/2, (this._pixelSize-boardLayerHeight)/2);
 		
-		this.addChild(this.boardLayer);
+		this.addChild(this._boardLayer);
 	},
 
-	drawDots: function () {
-		this.dotsNode = new cc.DrawNode();
+	_drawDots: function () {
+		this._dotsNode = new cc.DrawNode();
 
-		var worldSize = this.world.size;
+		var worldSize = this._world.size;
 
 		for (var x = 0; x < worldSize.width; x++) {
 			for (var y = 0; y < worldSize.height; y++) {
-				var layerPos = this.layerPositionForBoardPosition(cc.p(x, y));
-				this.dotsNode.drawDot(layerPos, 3, cc.color(0,0,0,255));
+				var layerPos = this._layerPositionForBoardPosition(cc.p(x, y));
+				this._dotsNode.drawDot(layerPos, 3, cc.color(0,0,0,255));
 			}
 		}
 
-		this.boardLayer.addChild(this.dotsNode);
+		this._boardLayer.addChild(this._dotsNode);
 	},
 	
-	drawWalls: function () {
-		this.wallsNode = new cc.DrawNode();
+	_drawWalls: function () {
+		this._wallsNode = new cc.DrawNode();
 		
-		var walls = this.world.walls;
+		var walls = this._world.walls;
 		for (var key in walls) {
 			if (!walls[key]) continue;
 			
 			var points = Util.stringToPoints(key);
-			this.drawWall(points[0], points[1]);
+			this._drawWall(points[0], points[1]);
 		}
 		
-		this.boardLayer.addChild(this.wallsNode);
+		this._boardLayer.addChild(this._wallsNode);
 	},
 	
-	drawWall: function (fromPos, toPos) {
+	_drawWall: function (fromPos, toPos) {
 		var fromPixelPos;
 		var toPixelPos;
 		
@@ -84,55 +84,55 @@ var Board = cc.Node.extend({
 			toPixelPos = cc.p(xPos, (fromPos.y+1) * SQUARE_SIZE);
 		}
 		
-		this.wallsNode.drawRect(fromPixelPos, toPixelPos, cc.color(0,0,0,255), 2, cc.color(0,0,0,255));
+		this._wallsNode.drawRect(fromPixelPos, toPixelPos, cc.color(0,0,0,255), 2, cc.color(0,0,0,255));
 	},
 	
-	drawBeepers: function () {		
-		this.beepersNode = new cc.DrawNode();
+	_drawBeepers: function () {		
+		this._beepersNode = new cc.DrawNode();
 
-		for (var key in this.beepers) {
-			var numBeepers = this.beepers[key];
+		for (var key in this._beepers) {
+			var numBeepers = this._beepers[key];
 			if (numBeepers > 0) {
 				var beeperPos = Util.stringToPoint(key);
-				this.drawBeeper(beeperPos, numBeepers)
+				this._drawBeeper(beeperPos, numBeepers)
 			}
 		}
 
-		this.boardLayer.addChild(this.beepersNode);
+		this._boardLayer.addChild(this._beepersNode);
 	},
 	
-	drawBeeper: function (beeperPos, numBeepers) {
-		var layerPos = this.layerPositionForBoardPosition(beeperPos);
+	_drawBeeper: function (beeperPos, numBeepers) {
+		var layerPos = this._layerPositionForBoardPosition(beeperPos);
 
-		this.beepersNode.drawDot(layerPos, 15, cc.color(0,150,150,255));
+		this._beepersNode.drawDot(layerPos, 15, cc.color(0,150,150,255));
 
 		var label = new cc.LabelTTF(numBeepers);
 		label.setPosition(layerPos);
-		this.beepersNode.addChild(label);
+		this._beepersNode.addChild(label);
 	},
 	
-	updateBeepers: function (position) {
-		if (this.beepersNode) this.beepersNode.removeFromParent();
-		this.drawBeepers();
+	_updateBeepers: function (position) {
+		if (this._beepersNode) this._beepersNode.removeFromParent();
+		this._drawBeepers();
 	},
 	
 	putBeeperAt: function (position) {
 		var pointKey = Util.pointToString(position);
-		var beeperCount = this.beepers[pointKey] || 0;
+		var beeperCount = this._beepers[pointKey] || 0;
 		
-		this.beepers[pointKey] = beeperCount+1;
-		this.updateBeepers();
+		this._beepers[pointKey] = beeperCount+1;
+		this._updateBeepers();
 	},
 	
 	pickBeeperAt: function (position) {
 		var pointKey = Util.pointToString(position);
-		var beeperCount = this.beepers[pointKey] || 0;
+		var beeperCount = this._beepers[pointKey] || 0;
 
-		this.beepers[pointKey] = beeperCount-1;
-		this.updateBeepers();
+		this._beepers[pointKey] = beeperCount-1;
+		this._updateBeepers();
 	},
 	
-	layerPositionForBoardPosition: function (boardPosition) {
+	_layerPositionForBoardPosition: function (boardPosition) {
 		var boardLayerX = boardPosition.x * SQUARE_SIZE + (SQUARE_SIZE/2);
 		var boardLayerY = boardPosition.y * SQUARE_SIZE + (SQUARE_SIZE/2);
 		
@@ -140,8 +140,8 @@ var Board = cc.Node.extend({
 	},
 
 	pixelPositionForBoardPosition: function(boardPosition) {
-		var layerPosition = this.layerPositionForBoardPosition(boardPosition);
-		var pixelPosition = this.boardLayer.convertToWorldSpace(layerPosition);
+		var layerPosition = this._layerPositionForBoardPosition(boardPosition);
+		var pixelPosition = this._boardLayer.convertToWorldSpace(layerPosition);
 		
 		return this.convertToNodeSpace(pixelPosition);
 	}
