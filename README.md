@@ -1,7 +1,9 @@
-KOR
+Karel-Cocos2d
 ===
 
-Karel in Cocos2d-js! 
+Karel is a great tool for learning programming fundamentals. You command a robot (or in this case a space ship), around a grid world. Accomplish various tasks while learning control structures, abstraction, and more. Learn more about its origins [here](http://en.wikipedia.org/wiki/Karel_%28programming_language%29). 
+
+This project was built to be used at [StreetCode Academy](http://www.liveinpeace.org/streetcode-academy/). It is currently not in use, nor maintained, but it is a great place to start if you wish to create your own Cocos2d Karel the Robot port.
 
 ##Usage##
 
@@ -79,7 +81,7 @@ The world itself:
 
 
 #TODO#
-1. Change execution speed from within KOR
-2. Change world from within KOR
-3. Re-run commands from within KOR
-4. Show Bugs within KOR rather than in console
+1. Change execution speed from within Karel
+2. Change world from within Karel
+3. Re-run commands from within Karel
+4. Show Bugs within Karel rather than in console
